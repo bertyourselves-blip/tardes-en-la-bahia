@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>FOLDER: TARDES EN LA BAHÍA</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(to bottom, #ffe5b4, #87ceeb);
+      text-align: center;
+      padding: 40px;
+      background-image: url('fondo.jpg');
+      background-size: cover;
+      background-position: center;
+      color: white;
+      text-shadow: 1px 1px 2px black;
+    }
+    h1 {
+      font-size: 2.5em;
+    }
+    #hangman {
+      font-size: 2em;
+      margin: 20px;
+    }
+    .letter-btn {
+      margin: 5px;
+      padding: 10px;
+      font-size: 1em;
+      cursor: pointer;
+    }
+    audio {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>FOLDER: TARDES EN LA BAHÍA</h1>
+  <p>Adivina el nombre de la canción 🎧</p>
+
+  <div id="hangman">_ _ _ _ _</div>
+
+  <div id="letters"></div>
+
+  <audio id="audioPreview" controls style="display:none;">
+    <source id="audioSource" src="" type="audio/mpeg">
+    Tu navegador no soporta el elemento de audio.
+  </audio>
+
+  <script>
+    const songs = [
+      { title: "TOLU", audio: "tolu.mp3" },
+      { title: "LOS SUNSETZ", audio: "los_sunsetz.mp3" }
+    ];
+
+    let currentSong = songs[Math.floor(Math.random() * songs.length)];
+    let word = currentSong.title.toUpperCase();
+    let guessed = Array.from(word).map(c => c === " " ? " " : "_");
+    let attempts = 6;
+
+    const hangmanDiv = document.getElementById("hangman");
+    const lettersDiv = document.getElementById("letters");
+
+    function updateHangman() {
+      hangmanDiv.textContent = guessed.join(" ");
+    }
+
+    function showAudio() {
+      const audio = document.getElementById("audioPreview");
+      const source = document.getElementById("audioSource");
+      source.src = currentSong.audio;
+      audio.style.display = "block";
+      audio.load();
+    }
+
+    function handleGuess(letter) {
+      let correct = false;
+      for (let i = 0; i < word.length; i++) {
+        if (word[i] === letter) {
+          guessed[i] = letter;
+          correct = true;
+        }
+      }
+
+      updateHangman();
+      if (!correct) attempts--;
+      if (guessed.join("") === word) {
+        alert("¡Correcto! 🎉 Escucha un adelanto...");
+        showAudio();
+      } else if (attempts === 0) {
+        alert("Lo siento 😢 ¡Intenta de nuevo!");
+        location.reload();
+      }
+    }
+
+    function createButtons() {
+      const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      for (let char of alphabet) {
+        const btn = document.createElement("button");
+        btn.textContent = char;
+        btn.classList.add("letter-btn");
+        btn.onclick = () => {
+          btn.disabled = true;
+          handleGuess(char);
+        };
+        lettersDiv.appendChild(btn);
+      }
+    }
+
+    createButtons();
+    updateHangman();
+  </script>
+
+</body>
+</html>
