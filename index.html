@@ -6,7 +6,7 @@
   <link rel="icon" href="favicon.ico" type="image/x-icon">
   <style>
     body {
-      font-family: 'Arial', sans-serif;
+      font-family: Arial, sans-serif;
       background: url('fondo.jpg') no-repeat center center fixed;
       background-size: cover;
       text-align: center;
@@ -28,6 +28,7 @@
     .hangman {
       font-size: 2em;
       margin: 20px 0;
+      letter-spacing: 5px;
     }
 
     .letter-btn {
@@ -44,6 +45,11 @@
 
     .letter-btn:hover {
       background-color: rgba(255, 255, 255, 0.4);
+    }
+
+    .letter-btn:disabled {
+      opacity: 0.3;
+      cursor: default;
     }
 
     .audio-section {
@@ -118,8 +124,10 @@
       audioPlayer.play();
     }
 
-    function handleGuess(letter) {
+    function handleGuess(letter, button) {
+      button.disabled = true;
       let found = false;
+
       for (let i = 0; i < current.title.length; i++) {
         if (current.title[i] === letter && guessed[i] === "_") {
           guessed[i] = letter;
@@ -140,7 +148,7 @@
       }
 
       if (attempts === 0) {
-        alert("¡Te quedaste sin intentos! 😢");
+        alert("¡Te quedaste sin intentos! 😢 La respuesta era: " + current.title);
         location.reload();
       }
     }
@@ -168,10 +176,7 @@
         const btn = document.createElement("button");
         btn.textContent = char;
         btn.classList.add("letter-btn");
-        btn.onclick = () => {
-          btn.disabled = true;
-          handleGuess(char);
-        };
+        btn.onclick = () => handleGuess(char, btn);
         lettersDiv.appendChild(btn);
       }
 
@@ -191,4 +196,3 @@
   </script>
 </body>
 </html>
-
